@@ -1,21 +1,18 @@
 defmodule InventoryManager do
   defstruct products: [], cart: []
 
-  # Agregar un nuevo producto al inventario
   def add_product(%InventoryManager{products: products} = inventory, name, price, stock) do
     id = length(products) + 1
     product = %{id: id, name: name, price: price, stock: stock}
     %InventoryManager{inventory | products: products ++ [product]}
   end
 
-  # Listar todos los productos
   def list_products(%InventoryManager{products: products}) do
     Enum.each(products, fn product ->
       IO.puts("#{product.id}. #{product.name} - Precio: $#{product.price}, Stock: #{product.stock}")
     end)
   end
 
-  # Aumentar el stock de un producto
   def increase_stock(%InventoryManager{products: products} = inventory, id, quantity) do
     updated_products = Enum.map(products, fn product ->
       if product.id == id do
@@ -27,7 +24,6 @@ defmodule InventoryManager do
     %InventoryManager{inventory | products: updated_products}
   end
 
-  # Vender un producto
   def sell_product(%InventoryManager{products: products, cart: cart} = inventory, id, quantity) do
     case Enum.find(products, fn product -> product.id == id end) do
       nil ->
@@ -49,7 +45,6 @@ defmodule InventoryManager do
     end
   end
 
-  # Agregar al carrito
   defp add_to_cart(cart, id, quantity) do
     case Enum.find(cart, fn {product_id, _} -> product_id == id end) do
       nil -> cart ++ [{id, quantity}]
@@ -60,14 +55,12 @@ defmodule InventoryManager do
     end
   end
 
-  # Ver el carrito de compras
   def view_cart(%InventoryManager{cart: cart}) do
     Enum.each(cart, fn {id, quantity} ->
       IO.puts("Producto ID: #{id}, Cantidad: #{quantity}")
     end)
   end
 
-  # Realizar el checkout y vaciar el carrito
   def checkout(%InventoryManager{products: products} = inventory, cart) do
     total_cost = Enum.reduce(cart, 0, fn {id, quantity}, acc ->
       case Enum.find(products, fn p -> p.id == id end) do
@@ -79,13 +72,12 @@ defmodule InventoryManager do
     %InventoryManager{inventory | cart: []}
   end
 
-  # Ejecutar el gestor de inventario
+
   def run do
     inventory = %InventoryManager{}
     loop(inventory)
   end
 
-  # Bucle principal
   defp loop(inventory) do
     IO.puts("""
     Gestor de Inventario
@@ -150,5 +142,4 @@ defmodule InventoryManager do
   end
 end
 
-# Ejecutar el gestor de inventario
 InventoryManager.run()
